@@ -1,0 +1,70 @@
+{% extends "admin/admin_base.html" %}
+
+{% block admin_title %}Управление заказами{% endblock %}
+
+{% block admin_actions %}
+<div class="btn-group me-2">
+    <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+        Фильтр: {{ 'Все' if status_filter == 'all' else status_filter }}
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{{ url_for('admin.manage_orders') }}?status=all">Все</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('admin.manage_orders') }}?status=new">Новые</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('admin.manage_orders') }}?status=in_progress">В работе</a></li>
+        <li><a class="dropdown-item" href="{{ url_for('admin.manage_orders') }}?status=completed">Завершенные</a></li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block admin_content %}
+<div class="table-responsive">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Клиент</th>
+                <th>Телефон</th>
+                <th>Дата съемки</th>
+                <th>Кол-во</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.client_name }}</td>
+                <td>{{ booking.phone }}</td>
+                <td>{{ booking.shooting_date.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ booking.people_count }}</td>
+                <td>
+                    <span class="badge 
+                        {% if booking.status == 'new' %}bg-primary
+                        {% elif booking.status == 'in_progress' %}bg-warning text-dark
+                        {% else %}bg-success
+                        {% endif %}">
+                        {{ booking.status }}
+                    </span>
+                </td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ url_for('admin.edit_order', order_id=booking.id) }}" 
+                           class="btn btn-outline-primary" title="Редактировать">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.delete_order', order_id=booking.id) }}" 
+                              style="display:inline;">
+                            <button type="submit" class="btn btn-outline-danger" 
+                                    onclick="return confirm('Удалить этот заказ?')" title="Удалить">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

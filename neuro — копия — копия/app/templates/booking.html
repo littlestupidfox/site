@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4 neon-title">ЗАПИСЬ НА ФОТОСЕССИЮ</h1>
+        
+        <div class="card bg-transparent border-neon mb-4">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('main.booking') }}">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.client_name.label(class="form-label") }}
+                        {{ form.client_name(class="form-control") }}
+                        {% for error in form.client_name.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.people_count.label(class="form-label") }}
+                        {{ form.people_count(class="form-control") }}
+                        {% for error in form.people_count.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control") }}
+                        {% for error in form.phone.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.shooting_date.label(class="form-label") }}
+                        {{ form.shooting_date(class="form-control datepicker") }}
+                        {% for error in form.shooting_date.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.shooting_time.label(class="form-label") }}
+                        {{ form.shooting_time(class="form-select") }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 pulse-effect">
+                        ОТПРАВИТЬ ЗАЯВКУ
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card bg-transparent border-neon">
+            <div class="card-body">
+                <h4 class="neon-title mb-3">ДОСТУПНЫЕ ДАТЫ</h4>
+                <div id="bookingCalendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr(".datepicker", {
+            locale: "ru",
+            minDate: "today",
+            disable: [
+                {% for slot in booked_slots %}
+                "{{ slot }}",
+                {% endfor %}
+            ]
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "admin/admin_base.html" %}
+
+{% block admin_title %}Управление статьями{% endblock %}
+
+{% block admin_actions %}
+<a href="{{ url_for('admin.create_post') }}" class="btn btn-sm btn-outline-primary">
+    <i class="bi bi-plus-circle me-1"></i> Добавить статью
+</a>
+{% endblock %}
+
+{% block admin_content %}
+<div class="table-responsive">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Заголовок</th>
+                <th>Дата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.created_at.strftime('%d.%m.%Y') }}</td>
+                <td>
+                    <div class="btn-group btn-group-sm">
+                        <a href="{{ url_for('admin.edit_post', post_id=article.id) }}" 
+                           class="btn btn-outline-primary" title="Редактировать">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <form method="POST" action="{{ url_for('admin.delete_post', post_id=article.id) }}" 
+                              style="display:inline;">
+                            <button type="submit" class="btn btn-outline-danger" 
+                                    onclick="return confirm('Удалить эту статью?')" title="Удалить">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
