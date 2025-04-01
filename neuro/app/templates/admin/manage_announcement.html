@@ -1,0 +1,65 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block admin_content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            
+            <div class="mb-3">
+                {{ form.title.label(class="form-label") }}
+                {{ form.title(class="form-control") }}
+            </div>
+            
+            <div class="mb-3">
+                {{ form.description.label(class="form-label") }}
+                {{ form.description(class="form-control", rows=5) }}
+            </div>
+            
+            <div class="mb-3">
+                {{ form.button_text.label(class="form-label") }}
+                {{ form.button_text(class="form-control") }}
+            </div>
+            
+            <h4>Доступные даты съемки</h4>
+            <div id="dates-container">
+                {% for date_form in form.dates %}
+                <div class="date-entry mb-3">
+                    {{ date_form.date.label(class="form-label") }}
+                    {{ date_form.date(class="form-control") }}
+                    <button type="button" class="btn btn-danger btn-sm mt-2 remove-date">Удалить</button>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button type="button" id="add-date" class="btn btn-secondary mb-3">Добавить дату</button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Добавление новой даты
+    document.getElementById('add-date').addEventListener('click', function() {
+        const container = document.getElementById('dates-container');
+        const index = container.children.length;
+        const newEntry = document.createElement('div');
+        newEntry.className = 'date-entry mb-3';
+        newEntry.innerHTML = `
+            <label class="form-label">Дата съемки</label>
+            <input class="form-control" id="dates-${index}-date" name="dates-${index}-date" type="date">
+            <button type="button" class="btn btn-danger btn-sm mt-2 remove-date">Удалить</button>
+        `;
+        container.appendChild(newEntry);
+    });
+
+    // Удаление даты
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-date')) {
+            e.target.closest('.date-entry').remove();
+        }
+    });
+});
+</script>
+{% endblock %}
